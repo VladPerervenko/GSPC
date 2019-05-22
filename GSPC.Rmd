@@ -1,0 +1,49 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+```{r lib}
+library('quantmod')
+library(PerformanceAnalytics)
+getSymbols("NFCI", src = 'FRED',  , from = '2000-01-01')
+getSymbols('^GSPC', from = '2000-01-01')
+```
+
+```{r data}
+NFCI ->.; lag(.) ->.; na.omit(.) -> NFCI
+merge(NFCI, GSPC) ->.; na.omit(.) -> data
+GSPC ->.; Cl(.) ->.; ROC(.) ->.; na.omit(.) -> data$GSPC
+
+```
+```{r sig}
+ifelse(data$NFCI < 1, 1, 0) ->.; na.locf(.) -> data$sig 
+data$sig*data$GSPC ->.; merge(., data$GSPC) ->.; na.omit(.) -> perf
+colnames(perf) <- c("Stress-based Strategy", "SP500")
+```
+
+```{r Risk}
+table.DownsideRisk(perf)
+```
+
+```{r Stats}
+table.Stats(perf)
+```
+```{r ris}
+charts.PerformanceSummary(perf)
+```
+
+```{r relativPerf}
+chart.RelativePerformance(perf[ ,1], perf[ ,2])
+```
+
+```{r riskReturn}
+chart.RiskReturnScatter(perf)
+```
+
+
+
+
+
+
